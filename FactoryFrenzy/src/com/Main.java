@@ -14,14 +14,18 @@ public class Main implements Runnable{
 	public static boolean running = true;
 	public static float taxrate = 0.03f;
 	
-	
+	public static Player0 user = new Player0(0,0);
 	
 	public Main(){
+		
 		start();
 	}
 	
 	
 	public synchronized void run() {
+		user.LocalSaveData();
+		
+		
 		while(running){
 			
 			

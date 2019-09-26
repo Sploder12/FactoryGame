@@ -25,13 +25,15 @@ public class Render extends Canvas implements Runnable {
 	public static Graphics2D g;
 	public static Font newFont, currentFont;
 	
-	public volatile static char state = 'M';
+	public volatile static char state = 'G';
 	public volatile static String subState = "main";
 	public static int[] fpsgraph = new int[30];
 	public static final String Version = "V0.0.2";
 	
-	public static final byte bodies = 1, shirts = 0, hairs = 0, hats = 0;
-	public static final Color[] skins = {new Color(255,255,255)};
+	public static final byte bodies = 1, shirts = 0, hairs = 2, hats = 1, faces = 5;
+	public static final Color[] skins = {new Color(255,255,255), new Color(255,255,230), new Color(255,255,200),
+			new Color(255,255,170), new Color(255,255,140), new Color(241, 194, 125),  new Color(224, 172, 105),
+			new Color(198, 134, 66),new Color(141, 85, 36),new Color(90,30,6),new Color(40, 0, 0),new Color(20,0,0)};
 	
 	public static BufferedImage[] BBmenus;
 	public Image[] menus;
@@ -40,14 +42,18 @@ public class Render extends Canvas implements Runnable {
 	public Image[] body = new Image[bodies];
 	
 	public static BufferedImage[] Bshirt = new BufferedImage[shirts];
-	public Image[] shirt = new Image[bodies];
+	public Image[] shirt = new Image[shirts];
 	
-	public static BufferedImage[] Bhair = new BufferedImage[shirts];
-	public Image[] hair = new Image[bodies];
+	public static BufferedImage[] Bhair = new BufferedImage[hairs];
+	public Image[] hair = new Image[hairs];
 	
-	public static BufferedImage[] Bhats = new BufferedImage[shirts];
-	public Image[] hat = new Image[bodies];
+	public static BufferedImage[] Bhats = new BufferedImage[hats];
+	public Image[] hat = new Image[hats];
 	
+	public static BufferedImage[] Bfaces = new BufferedImage[faces];
+	public Image[] face = new Image[faces];
+	
+	public static BufferedImage Bhead;
 	
 	public static int curplayer = 0; //for solo purposes
 	
@@ -63,6 +69,8 @@ public class Render extends Canvas implements Runnable {
 			BBmenus = new BufferedImage[1];
 			menus = new Image[1];
 			
+			Bhead = ImageIO.read(new File("Resources\\Player\\Head.png"));
+			
 			for(int i = 0; i < 1; i++){
 				BBmenus[i] = ImageIO.read(new File("Resources\\Menus\\"+ i + ".png")); //loads tilesets
 				menus[i] = BBmenus[i].getScaledInstance((int)(800*xScale), -1, Image.SCALE_SMOOTH);
@@ -70,21 +78,27 @@ public class Render extends Canvas implements Runnable {
 			
 			for(byte i = 0; i < bodies; i++){
 				Bbodi[i] = ImageIO.read(new File("Resources\\Player\\body"+ i + ".png")); //loads tilesets
-				body[i] = Bbodi[i].getScaledInstance((int)(800*xScale), -1, Image.SCALE_SMOOTH);
+				body[i] = Bbodi[i].getScaledInstance((int)(48*xScale), -1, Image.SCALE_SMOOTH);
 			}
 			for(byte i = 0; i < shirts; i++){
 				Bshirt[i] = ImageIO.read(new File("Resources\\Player\\shirt"+ i + ".png")); //loads tilesets
-				shirt[i] = Bshirt[i].getScaledInstance((int)(800*xScale), -1, Image.SCALE_SMOOTH);
+				shirt[i] = Bshirt[i].getScaledInstance((int)(48*xScale), -1, Image.SCALE_SMOOTH);
 			}
 			for(byte i = 0; i < hairs; i++){
 				Bhair[i] = ImageIO.read(new File("Resources\\Player\\hair"+ i + ".png")); //loads tilesets
-				hair[i] = Bhair[i].getScaledInstance((int)(800*xScale), -1, Image.SCALE_SMOOTH);
+				hair[i] = Bhair[i].getScaledInstance((int)(48*xScale), -1, Image.SCALE_SMOOTH);
 			}
 			for(byte i = 0; i < hats; i++){
 				Bhats[i] = ImageIO.read(new File("Resources\\Player\\hat"+ i + ".png")); //loads tilesets
-				hat[i] = Bhats[i].getScaledInstance((int)(800*xScale), -1, Image.SCALE_SMOOTH);
+				hat[i] = Bhats[i].getScaledInstance((int)(48*xScale), -1, Image.SCALE_SMOOTH);
 			}
 			
+			for(byte i = 0; i < faces; i++){
+				Bfaces[i] = ImageIO.read(new File("Resources\\Player\\face"+ i + ".png")); //loads tilesets
+				face[i] = Bfaces[i].getScaledInstance((int)(48*xScale), -1, Image.SCALE_SMOOTH);
+			}
+			
+			Main.user.LoadData("Saves\\null.pdat");
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -153,8 +167,8 @@ public class Render extends Canvas implements Runnable {
 		}
 		stop();
 	}
-	
-	
+
+
 private void render(){
 		BufferStrategy bs = this.getBufferStrategy();
 		if(bs == null){
@@ -180,6 +194,29 @@ private void render(){
 		break;
 		case 'G':
 			
+			
+
+			g.drawImage(Main.user.bodyimg, (int)(Config.WIDTH/2 - 24*xScale), (int)(Config.HEIGHT/2 - 48*xScale), this); //draws the body 
+			//g.drawImage(shirt[Main.user.shirt], (int)(Config.WIDTH/2 - 24*xScale), (int)(Config.HEIGHT/2 - 48*xScale), this); //draws the shirt ontop
+			g.drawImage(Main.user.headimg,(int)(Config.WIDTH/2 - 22*xScale), (int)(Config.HEIGHT/2 - 73*xScale), this);
+			g.drawImage(Main.user.faceimg, (int)(Config.WIDTH/2 - 22*xScale), (int)(Config.HEIGHT/2 - 73*xScale), this); //draws the head
+			//@TODO colorize skin and hair
+			g.drawImage(Main.user.hairimg, (int)(Config.WIDTH/2 - 22*xScale), (int)(Config.HEIGHT/2 - 73*xScale), this); //draws the hair on head
+			g.drawImage(hat[Main.user.hat], (int)(Config.WIDTH/2 - 24*xScale), (int)(Config.HEIGHT/2 - 64*xScale), this); //draws the hat on head
+			
+		break;
+		case 'S':
+			
+			
+			g.drawImage(Main.user.bodyimg, (int)(Config.WIDTH/2 - 24*xScale), (int)(Config.HEIGHT/2 - 48*xScale), this); //draws the body 
+			g.drawImage(shirt[Main.user.shirt], (int)(Config.WIDTH/2 - 24*xScale), (int)(Config.HEIGHT/2 - 48*xScale), this); //draws the shirt ontop
+			
+			//g.drawImage(coloring(Bfaces[0], skins[Main.user.skin]), (int)(Config.WIDTH/2 - 32*xScale), (int)(Config.HEIGHT/2 - 48*xScale), this); //draws the head
+			//@TODO colorize skin and hair
+			//g.drawImage(coloring(Bhair[Main.user.hair], Main.user.haircolor), (int)(Config.WIDTH/2 - 48*xScale), (int)(Config.HEIGHT/2 - 48*xScale), this); //draws the hair on head
+			g.drawImage(hat[Main.user.hat], (int)(Config.WIDTH/2 - 24*xScale), (int)(Config.HEIGHT/2 - 48*xScale), this); //draws the hat on head
+			
+		break;
 		}
 		  
 		  

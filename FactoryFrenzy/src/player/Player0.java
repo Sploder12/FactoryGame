@@ -4,8 +4,12 @@ import java.io.File;
 import sploder12.json.JSON;
 
 import java.awt.Color;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+
+import com.Render;
 
 
 public class Player0 {
@@ -17,8 +21,9 @@ public class Player0 {
 	public float[] earnings = {0.0F};
 	public float salary = 0.0f;
 	
-	public byte skin = 0, hair = 0, hat = 0, shirt = 0, body = 0, shoes = 0;
-	public Color haircolor = new Color(200,150,50);
+	public byte skin = 3, hair = 0, hat = 0, shirt = 0, body = 0, face = 1;
+	public Color haircolor = new Color(95,50,25);
+	public Color eyecolor = new Color(50,50,255);
 	public int[][] inventory = new int[8][4];
 	public int[][] invenCount = new int[8][4];
 	
@@ -26,6 +31,9 @@ public class Player0 {
 	public float energy = 100;
 	public float thirst = 100;
 	public float hunger = 100;
+	
+	public Image bodyimg, hairimg, faceimg, headimg;
+	
 	
 	public Player0(int x, int y, double cash){
 		this.cash = cash;
@@ -39,6 +47,22 @@ public class Player0 {
 		this.y = y;
 		
 	}
+	
+	
+	public Image coloring(BufferedImage img, Color color){
+		
+		for(int i = 0; i < 32; i++){
+			for(int j = 0; j < 32; j++){
+				if(img.getRGB(i, j) == -2){ //#fffffe
+					img.setRGB(i, j, color.getRGB());
+				}
+			}
+		}
+		Image out = img.getScaledInstance((int)(48*Render.xScale), -1, Image.SCALE_SMOOTH);
+		
+		return out;
+	}
+	
 		
 	public void LoadData(String file){
 		
@@ -58,14 +82,22 @@ public class Player0 {
 		earnings[0] = json.getFloatValueOfDict(inpt, json.locateStringEnd(inpt, "fearn"));
 		salary = json.getFloatValueOfDict(inpt, json.locateStringEnd(inpt, "sal"));
 		
+		
+		
 		skin = json.getByteValueOfDict(inpt, json.locateStringEnd(inpt, "skin"));
+		
 		hair = json.getByteValueOfDict(inpt, json.locateStringEnd(inpt, "hair"));
 		hat = json.getByteValueOfDict(inpt, json.locateStringEnd(inpt, "hat"));
+		
+		
 		shirt = json.getByteValueOfDict(inpt, json.locateStringEnd(inpt, "shirt"));
 		body = json.getByteValueOfDict(inpt, json.locateStringEnd(inpt, "body"));
-		shoes = json.getByteValueOfDict(inpt, json.locateStringEnd(inpt, "shoes"));
+		face = json.getByteValueOfDict(inpt, json.locateStringEnd(inpt, "face"));
+		
+		
 		
 		haircolor = new Color(json.getIntValueOfDict(inpt, json.locateStringEnd(inpt, "hColor")));
+		eyecolor = new Color(json.getIntValueOfDict(inpt, json.locateStringEnd(inpt, "eColor")));
 		
 		for(byte i = 0; i < 8; i++){
 			for(byte j = 0; j < 4; j++){
@@ -78,6 +110,14 @@ public class Player0 {
 		energy = json.getFloatValueOfDict(inpt, json.locateStringEnd(inpt, "stam"));
 		thirst = json.getFloatValueOfDict(inpt, json.locateStringEnd(inpt, "thir"));
 		hunger = json.getFloatValueOfDict(inpt, json.locateStringEnd(inpt, "hung"));
+
+		
+		bodyimg = coloring(Render.Bbodi[body],Render.skins[skin]);
+		headimg = coloring(Render.Bhead, Render.skins[skin]);
+		
+		faceimg = coloring(Render.Bfaces[face], eyecolor);
+		
+		hairimg = coloring(Render.Bhair[hair], haircolor);
 	}
 	
 	public void LocalSaveData(){
@@ -98,27 +138,28 @@ public class Player0 {
 	        	fearnings += earnings[i];
 	        }
 	        output.append("fearn:" + fearnings + ',');
-	        output.append("sal:" + salary);
+	        output.append("sal: " + salary + ',');
 	        
-	        output.append("skin:" + (char)(skin) + ',');
-	        output.append("hair:" + (char)(hair) + ',');
-	        output.append("hat:" + (char)(hat) + ',');
-	        output.append("shirt:" + (char)(shirt) + ',');
-	        output.append("body:" + (char)(body) + ','); 
-	        output.append("shoes:" + (char)(shoes) + ',');
-	        output.append("hColor:" + haircolor.getRGB() + ',');
+	        output.append("skin: " + skin + ',');
+	        output.append("hair: " + hair + ',');
+	        output.append("hat: " + hat + ',');
+	        output.append("shirt: " + shirt + ',');
+	        output.append("body: " + body + ','); 
+	        output.append("face: " + face + ',');
+	        output.append("hColor: " + haircolor.getRGB() + ',');
+	        output.append("eColor: " + eyecolor.getRGB() + ',');
 	        
 	        for(byte i = 0; i < 8; i++){
 	        	for(byte j = 0; j < 4; j++){
-		        	output.append("invI" + i + j +":" + inventory[i][j] + ',');
-		        	output.append("invC" + i + j +":" + invenCount[i][j] + ',');
+		        	output.append("invI" + i + j +": " + inventory[i][j] + ',');
+		        	output.append("invC" + i + j +": " + invenCount[i][j] + ',');
 	        	}
 	        }
 	        
 	        output.append("hp: " + health + ',');
-	        output.append("stam:" + energy + ',');
-	        output.append("thir:" + thirst +',');
-	        output.append("hung:" + hunger + ',');
+	        output.append("stam: " + energy + ',');
+	        output.append("thir: " + thirst +',');
+	        output.append("hung: " + hunger + ',');
 	        
 	        output.append('}');
 	        output.close();
