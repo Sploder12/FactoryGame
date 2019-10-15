@@ -21,11 +21,13 @@ public class Player0 {
 	public float[] earnings = {0.0F};
 	public float salary = 0.0f;
 	
-	public byte skin = 3, hair = 0, hat = 0, shirt = 0, body = 0, face = 1;
+	public byte skin = 3, hair = 0, hat = 0, shirt = 1, body = 0, face = 1;
 	public Color haircolor = new Color(95,50,25);
 	public Color eyecolor = new Color(50,50,255);
 	public int[][] inventory = new int[8][4];
 	public int[][] invenCount = new int[8][4];
+	
+	public int helditm = 0;
 	
 	public float health = 100;
 	public float energy = 100;

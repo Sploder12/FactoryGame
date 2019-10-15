@@ -25,12 +25,12 @@ public class Render extends Canvas implements Runnable {
 	public static Graphics2D g;
 	public static Font newFont, currentFont;
 	
-	public volatile static char state = 'G';
+	public volatile static char state = 'S';
 	public volatile static String subState = "main";
 	public static int[] fpsgraph = new int[30];
 	public static final String Version = "V0.0.2";
 	
-	public static final byte bodies = 1, shirts = 0, hairs = 2, hats = 1, faces = 5;
+	public static final byte bodies = 1, shirts = 2, hairs = 2, hats = 1, faces = 5, items = 1;
 	public static final Color[] skins = {new Color(255,255,255), new Color(255,255,230), new Color(255,255,200),
 			new Color(255,255,170), new Color(255,255,140), new Color(241, 194, 125),  new Color(224, 172, 105),
 			new Color(198, 134, 66),new Color(141, 85, 36),new Color(90,30,6),new Color(40, 0, 0),new Color(20,0,0)};
@@ -52,6 +52,9 @@ public class Render extends Canvas implements Runnable {
 	
 	public static BufferedImage[] Bfaces = new BufferedImage[faces];
 	public Image[] face = new Image[faces];
+	
+	public static BufferedImage[] BItems = new BufferedImage[items];
+	public Image[] item = new Image[items]; 
 	
 	public static BufferedImage Bhead;
 	
@@ -80,10 +83,15 @@ public class Render extends Canvas implements Runnable {
 				Bbodi[i] = ImageIO.read(new File("Resources\\Player\\body"+ i + ".png")); //loads tilesets
 				body[i] = Bbodi[i].getScaledInstance((int)(48*xScale), -1, Image.SCALE_SMOOTH);
 			}
+			
+			
 			for(byte i = 0; i < shirts; i++){
-				Bshirt[i] = ImageIO.read(new File("Resources\\Player\\shirt"+ i + ".png")); //loads tilesets
-				shirt[i] = Bshirt[i].getScaledInstance((int)(48*xScale), -1, Image.SCALE_SMOOTH);
+				for(byte j = 0; j < bodies; j++){
+					Bshirt[i] = ImageIO.read(new File("Resources\\Player\\"+ j +"shirt"+ i + ".png")); //loads tilesets
+					shirt[i] = Bshirt[i].getScaledInstance((int)(48*xScale), -1, Image.SCALE_SMOOTH);
+				}
 			}
+			
 			for(byte i = 0; i < hairs; i++){
 				Bhair[i] = ImageIO.read(new File("Resources\\Player\\hair"+ i + ".png")); //loads tilesets
 				hair[i] = Bhair[i].getScaledInstance((int)(48*xScale), -1, Image.SCALE_SMOOTH);
@@ -144,8 +152,9 @@ public class Render extends Canvas implements Runnable {
 			
 			if(System.currentTimeMillis() - timer > 1000){
 				timer += 1000;
-				//System.out.println("(Graphic)FPS: " + frames);  
-				//System.out.println(fpslimit);
+				System.out.println("(Graphic)FPS: " + frames);  
+				System.out.println(Config.fpslimit);
+				System.out.println(Config.wantedfps);
 				if(frames > Config.wantedfps+2 && Config.fpslimit > 2){
 					Config.fpslimit -= 2;
 				}else if(frames < Config.wantedfps-2 && Config.fpslimit < 254){ //framerate stablizer
@@ -197,7 +206,7 @@ private void render(){
 			
 
 			g.drawImage(Main.user.bodyimg, (int)(Config.WIDTH/2 - 24*xScale), (int)(Config.HEIGHT/2 - 48*xScale), this); //draws the body 
-			//g.drawImage(shirt[Main.user.shirt], (int)(Config.WIDTH/2 - 24*xScale), (int)(Config.HEIGHT/2 - 48*xScale), this); //draws the shirt ontop
+			g.drawImage(shirt[Main.user.shirt + (Main.user.body * shirts)], (int)(Config.WIDTH/2 - 24*xScale), (int)(Config.HEIGHT/2 - 48*xScale), this); //draws the shirt ontop
 			g.drawImage(Main.user.headimg,(int)(Config.WIDTH/2 - 22*xScale), (int)(Config.HEIGHT/2 - 73*xScale), this);
 			g.drawImage(Main.user.faceimg, (int)(Config.WIDTH/2 - 22*xScale), (int)(Config.HEIGHT/2 - 73*xScale), this); //draws the head
 			//@TODO colorize skin and hair
@@ -207,14 +216,16 @@ private void render(){
 		break;
 		case 'S':
 			
+			g.setColor(Color.red);
+			g.drawRect(0 - Main.user.x, 0 - Main.user.y, 100, 100);
 			
 			g.drawImage(Main.user.bodyimg, (int)(Config.WIDTH/2 - 24*xScale), (int)(Config.HEIGHT/2 - 48*xScale), this); //draws the body 
-			g.drawImage(shirt[Main.user.shirt], (int)(Config.WIDTH/2 - 24*xScale), (int)(Config.HEIGHT/2 - 48*xScale), this); //draws the shirt ontop
-			
-			//g.drawImage(coloring(Bfaces[0], skins[Main.user.skin]), (int)(Config.WIDTH/2 - 32*xScale), (int)(Config.HEIGHT/2 - 48*xScale), this); //draws the head
+			g.drawImage(shirt[Main.user.shirt + (Main.user.body * shirts)], (int)(Config.WIDTH/2 - 24*xScale), (int)(Config.HEIGHT/2 - 48*xScale), this); //draws the shirt ontop
+			g.drawImage(Main.user.headimg,(int)(Config.WIDTH/2 - 22*xScale), (int)(Config.HEIGHT/2 - 73*xScale), this);
+			g.drawImage(Main.user.faceimg, (int)(Config.WIDTH/2 - 22*xScale), (int)(Config.HEIGHT/2 - 73*xScale), this); //draws the head
 			//@TODO colorize skin and hair
-			//g.drawImage(coloring(Bhair[Main.user.hair], Main.user.haircolor), (int)(Config.WIDTH/2 - 48*xScale), (int)(Config.HEIGHT/2 - 48*xScale), this); //draws the hair on head
-			g.drawImage(hat[Main.user.hat], (int)(Config.WIDTH/2 - 24*xScale), (int)(Config.HEIGHT/2 - 48*xScale), this); //draws the hat on head
+			g.drawImage(Main.user.hairimg, (int)(Config.WIDTH/2 - 22*xScale), (int)(Config.HEIGHT/2 - 73*xScale), this); //draws the hair on head
+			g.drawImage(hat[Main.user.hat], (int)(Config.WIDTH/2 - 24*xScale), (int)(Config.HEIGHT/2 - 64*xScale), this); //draws the hat on head
 			
 		break;
 		}

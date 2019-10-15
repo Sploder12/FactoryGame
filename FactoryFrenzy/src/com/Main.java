@@ -21,7 +21,7 @@ public class Main implements Runnable{
 		start();
 	}
 	
-	
+	private float speedmult = 1;
 	public synchronized void run() {
 		user.LocalSaveData();
 		
@@ -33,6 +33,27 @@ public class Main implements Runnable{
 			
 			//put code here
 			
+			if(Render.state == 'S'){
+				speedmult = (Keyboard.sprinting)? 2:1;
+				if(Keyboard.pressingW){
+					user.moveY(Math.round(-1 * speedmult));
+				}else if(Keyboard.pressingS){
+					user.moveY(Math.round(1 * speedmult));
+				}
+					
+				if(Keyboard.pressingA){
+					user.moveX(Math.round(-1 * speedmult));	
+				}else if(Keyboard.pressingD){
+					user.moveX(Math.round(1 * speedmult));
+				}
+				
+				
+				if(Keyboard.sprinting){
+					//user.energy -= 0.000001;
+				}
+				
+				
+			}
 			
 			
 			try {

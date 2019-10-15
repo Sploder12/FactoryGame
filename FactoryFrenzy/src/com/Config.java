@@ -19,7 +19,7 @@ public class Config {
 	public static void loadConfig(){ 
 		try{
 			String inpt = json.convertToString("Resources\\config.cnf");
-			wantedfps = json.getByteValueOfDict(inpt, json.locateStringEnd(inpt, "frames"));
+			//wantedfps = json.getByteValueOfDict(inpt, json.locateStringEnd(inpt, "frames"));
 			
 			svolume = json.getFloatValueOfDict(inpt, json.locateStringEnd(inpt, "volume"));
 			WIDTH = json.getIntValueOfDict(inpt, json.locateStringEnd(inpt, "reswid"));
