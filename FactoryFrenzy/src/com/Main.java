@@ -3,6 +3,7 @@ package com;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import World.World;
 import player.*;
 import building.*;
 import npc.*;
@@ -13,7 +14,7 @@ public class Main implements Runnable{
 	public static Thread main;
 	public static boolean running = true;
 	public static float taxrate = 0.03f;
-	
+	public static World world = new World();
 	public static Player0 user = new Player0(0,0);
 	
 	public Main(){
@@ -25,16 +26,23 @@ public class Main implements Runnable{
 	public synchronized void run() {
 		user.LocalSaveData();
 		
-		
+		long timer = System.currentTimeMillis();
 		while(running){
 			
-			
-			
+			if(System.currentTimeMillis() - timer >= 1000){
+				timer += 1000;
+				if(World.time <= 1440){
+					World.time ++;
+				}else{
+					World.time = 0;
+				}
+			}
 			
 			//put code here
 			
 			if(Render.state == 'S'){
-				speedmult = (Keyboard.sprinting)? 2:1;
+				speedmult = (Keyboard.sprinting)? 4:2;
+				speedmult = ((Keyboard.pressingS && (Keyboard.pressingA || Keyboard.pressingD))||(Keyboard.pressingW && (Keyboard.pressingA || Keyboard.pressingD)))? speedmult/2:speedmult;
 				if(Keyboard.pressingW){
 					user.moveY(Math.round(-1 * speedmult));
 				}else if(Keyboard.pressingS){
@@ -83,10 +91,26 @@ public class Main implements Runnable{
 		}
 	}
 	
-	
+public static void generateLandscape(long seed){
+		World world = new World();
+		for(short X = 0; X < 5000; X++){
+			for(short Y = 0; Y < 5000; Y++){
+				world.worldScape[X][Y] = FloorTiles.Grass;
+				world.lightLevel[X][Y] = 17;
+				world.covered[X][Y] = false;
+				world.worldObjects[X][Y] = ObjectTiles.Air;
+			}
+		}
+		world.worldScape[0][0] = FloorTiles.DeepWater;
+		world.worldScape[0][4999] = FloorTiles.DeepWater;
+		world.worldScape[4999][0] = FloorTiles.DeepWater;
+		world.worldScape[4999][4999] = FloorTiles.DeepWater;
+		Main.world = world;
+	}
 	
 	public static void main(String[] args) {
 		Config.loadConfig(); //gotta load that config
+		generateLandscape(100);
 		new Main();
 		try{
 			Config.WIDTH = Integer.parseInt(args[0]); //takes in args for height and width of window

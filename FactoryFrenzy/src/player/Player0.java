@@ -17,7 +17,6 @@ public class Player0 {
 	private JSON json = new JSON();
 	public double cash = 0, bank = 0;
 	public int x = 0, y = 0;
-	public int worldx = 0, worldy = 0;
 	public float[] earnings = {0.0F};
 	public float salary = 0.0f;
 	
@@ -78,9 +77,6 @@ public class Player0 {
 		x = json.getIntValueOfDict(inpt, json.locateStringEnd(inpt, "x"));
 		y = json.getIntValueOfDict(inpt, json.locateStringEnd(inpt, "y"));
 		
-		worldx = json.getIntValueOfDict(inpt, json.locateStringEnd(inpt, "wx"));
-		worldy = json.getIntValueOfDict(inpt, json.locateStringEnd(inpt, "wy"));
-		
 		earnings[0] = json.getFloatValueOfDict(inpt, json.locateStringEnd(inpt, "fearn"));
 		salary = json.getFloatValueOfDict(inpt, json.locateStringEnd(inpt, "sal"));
 		
@@ -133,8 +129,6 @@ public class Player0 {
 	        output.append("bank:" + bank + ',');
 	        output.append("x: " + x + ',');
 	        output.append("y: " + y + ',');
-	        output.append("wx: " + worldx + ',');
-	        output.append("wy: " + worldy + ',');
 	        double fearnings = 0.0;
 	        for(int i = 0; i < earnings.length; i++){
 	        	fearnings += earnings[i];

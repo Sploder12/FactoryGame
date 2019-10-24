@@ -1,5 +1,5 @@
 package building;
 
 public enum FloorTiles {
-	Grass
+	Grass, Water, Sand, Dirt, DeepWater
 }

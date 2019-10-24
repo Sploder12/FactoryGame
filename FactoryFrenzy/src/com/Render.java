@@ -13,6 +13,7 @@ import java.io.File;
 import javax.imageio.ImageIO;
 
 import building.*;
+import World.*;
 
 public class Render extends Canvas implements Runnable {
 	private static final long serialVersionUID = -9013264526583867430L;
@@ -31,12 +32,16 @@ public class Render extends Canvas implements Runnable {
 	public static final String Version = "V0.0.2";
 	
 	public static final byte bodies = 1, shirts = 2, hairs = 2, hats = 1, faces = 5, items = 1;
+	public static final byte worldFloorTiles = 5;
 	public static final Color[] skins = {new Color(255,255,255), new Color(255,255,230), new Color(255,255,200),
 			new Color(255,255,170), new Color(255,255,140), new Color(241, 194, 125),  new Color(224, 172, 105),
 			new Color(198, 134, 66),new Color(141, 85, 36),new Color(90,30,6),new Color(40, 0, 0),new Color(20,0,0)};
 	
 	public static BufferedImage[] BBmenus;
 	public Image[] menus;
+	
+	public static BufferedImage[] Bfloors = new BufferedImage[worldFloorTiles];
+	public Image[] floor = new Image[worldFloorTiles];
 	
 	public static BufferedImage[] Bbodi = new BufferedImage[bodies];
 	public Image[] body = new Image[bodies];
@@ -78,6 +83,12 @@ public class Render extends Canvas implements Runnable {
 				BBmenus[i] = ImageIO.read(new File("Resources\\Menus\\"+ i + ".png")); //loads tilesets
 				menus[i] = BBmenus[i].getScaledInstance((int)(800*xScale), -1, Image.SCALE_SMOOTH);
 			}
+			
+			for(int i =0; i <  worldFloorTiles; i++){
+				Bfloors[i] = ImageIO.read(new File("Resources\\World\\floor\\f"+ i + ".png"));
+				floor[i] = Bfloors[i].getScaledInstance((int)(32*xScale), -1, Image.SCALE_SMOOTH);
+			}
+			
 			
 			for(byte i = 0; i < bodies; i++){
 				Bbodi[i] = ImageIO.read(new File("Resources\\Player\\body"+ i + ".png")); //loads tilesets
@@ -216,8 +227,20 @@ private void render(){
 		break;
 		case 'S':
 			
-			g.setColor(Color.red);
-			g.drawRect(0 - Main.user.x, 0 - Main.user.y, 100, 100);
+			
+			for(int x  = 0; x < 29; x++){ //Player can only see 25x18 area around them
+				for(int y = 0; y < 22; y++){ //29x22 is used to prevent stuttering when moving
+					try{
+						//System.out.println(Main.user.x/32);
+						g.drawImage(floor[Main.world.worldScape[x+Main.user.x/32][y+Main.user.y/32].ordinal()],(x-2)*32-(Main.user.x%32), (y-2)*32-(Main.user.y%32),this);
+					}catch (Exception e){	
+						g.drawImage(floor[4], (x-2)*32-(Main.user.x%32), (y-2)*32-(Main.user.y%32),this);
+					}
+				}
+			}
+			
+			//@TODO add objects and roof rendering
+			
 			
 			g.drawImage(Main.user.bodyimg, (int)(Config.WIDTH/2 - 24*xScale), (int)(Config.HEIGHT/2 - 48*xScale), this); //draws the body 
 			g.drawImage(shirt[Main.user.shirt + (Main.user.body * shirts)], (int)(Config.WIDTH/2 - 24*xScale), (int)(Config.HEIGHT/2 - 48*xScale), this); //draws the shirt ontop
@@ -227,6 +250,19 @@ private void render(){
 			g.drawImage(Main.user.hairimg, (int)(Config.WIDTH/2 - 22*xScale), (int)(Config.HEIGHT/2 - 73*xScale), this); //draws the hair on head
 			g.drawImage(hat[Main.user.hat], (int)(Config.WIDTH/2 - 24*xScale), (int)(Config.HEIGHT/2 - 64*xScale), this); //draws the hat on head
 			
+			for(int x  = 0; x < 29; x++){ //This is for shading, it is done last
+				for(int y = 0; y < 22; y++){ //29x22 is used to prevent uneven shading when moving
+					try{
+						//Color shading = new Color(0,0,0,255-Main.world.lightLevel[x][y]*15);
+						Color shading = new Color(0,0,0,255-World.timeLight()*15);
+						g.setColor(shading);
+						g.fillRect((x-2)*32-(Main.user.x%64), (y-2)*32-(Main.user.y%64), 32, 32);
+					}catch(Exception e){
+						//e.printStackTrace(); Usually A NullPointer Exception
+					}
+					
+				}
+			}
 		break;
 		}
 		  

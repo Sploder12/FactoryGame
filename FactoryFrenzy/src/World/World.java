@@ -3,8 +3,14 @@ package World;
 import building.*;
 
 public class World {
-	public static WorldStruct[][] fullWorld = new WorldStruct[100][100]; //This is technically a 5D array
-	//[WorldX][WorldY].Layer[X][Y] Layer could be treated as an array of 3
-	//[100][100][3][255][255] Atleast 19,507,500  Bytes of mem or 19MB
+	public FloorTiles[][] worldScape = new FloorTiles[5000][5000]; //The look of the ground
+	public ObjectTiles[][] worldObjects = new ObjectTiles[5000][5000]; //Walls-Coneyers-2nd Layer Stuff
+	public boolean[][] covered = new boolean[5000][5000]; //roofs and tree cover etc
+	public byte[][] lightLevel = new byte[5000][5000]; //The Light Level of each area, 0-17
 	
+	public static int time = 0;
+	public static byte timeLight(){
+		return (byte) (Math.abs(time-720)/-60+15);
+		
+	}
 }
