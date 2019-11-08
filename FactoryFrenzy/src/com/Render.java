@@ -13,6 +13,7 @@ import java.io.File;
 import javax.imageio.ImageIO;
 
 import building.*;
+import player.Player0;
 import World.*;
 
 public class Render extends Canvas implements Runnable {
@@ -89,6 +90,10 @@ public class Render extends Canvas implements Runnable {
 				floor[i] = Bfloors[i].getScaledInstance((int)(32*xScale), -1, Image.SCALE_SMOOTH);
 			}
 			
+			for(int i =0; i <  items; i++){
+				BItems[i] = ImageIO.read(new File("Resources\\Items\\item"+ i + ".png"));
+				item[i] = BItems[i].getScaledInstance((int)(65*xScale), -1, Image.SCALE_SMOOTH);
+			}
 			
 			for(byte i = 0; i < bodies; i++){
 				Bbodi[i] = ImageIO.read(new File("Resources\\Player\\body"+ i + ".png")); //loads tilesets
@@ -189,6 +194,11 @@ public class Render extends Canvas implements Runnable {
 	}
 
 
+final Color transBlack = new Color(0,0,0, 150);
+final Color transRed = new Color(200,0,0,175);
+final Color transWhite = new Color(255,255,255,150);
+final Color transGreen = new Color(0,200,0,175);
+final Color transBlue = new Color(0,0,200,175);
 private void render(){
 		BufferStrategy bs = this.getBufferStrategy();
 		if(bs == null){
@@ -263,6 +273,46 @@ private void render(){
 					
 				}
 			}
+			
+
+			currentFont = g.getFont();
+			newFont = currentFont.deriveFont(xScale*(currentFont.getSize() * 1.7F));
+			g.setFont(newFont);
+			
+			
+			
+			g.setColor(transBlack);
+			g.fillRect(0,Math.round(450*yScale),Config.WIDTH, Config.HEIGHT);
+			for(int inv = 0; inv < 8; inv++){
+				g.setColor(transBlack);
+				g.fillRect(Math.round((inv*95+30)*xScale), Math.round(495*yScale), Math.round(65*xScale), Math.round(65*yScale));
+				g.drawImage(item[Main.user.inventory[inv][3]], Math.round((inv*95+30)*xScale), Math.round(495*yScale),this);
+				g.setColor(transWhite);
+				g.drawString(Main.user.invenCount[inv][3]+"",Math.round((inv*95+82)*xScale), Math.round(560*yScale));
+				
+			}
+			
+			
+			
+			g.drawString(Main.user.name,(int)(Config.WIDTH/2 - (Main.user.name.length()*4)*xScale), (int)(Config.HEIGHT/2 - 65*xScale)); //name
+			
+			
+			
+			g.fillRect(Math.round(40*xScale), Math.round(465*yScale),Math.round(200*xScale), Math.round(20*yScale)); //hpbar
+			g.fillRect(Math.round(295*xScale), Math.round(465*yScale),Math.round(200*xScale), Math.round(20*yScale)); //Stambar
+			g.fillRect(Math.round(550*xScale), Math.round(465*yScale),Math.round(200*xScale), Math.round(20*yScale)); //Hungbar
+			
+			g.setColor(transRed);
+			g.fillRect(Math.round(40*xScale), Math.round(465*yScale),Math.round(200*(Main.user.health/100)*xScale), Math.round(20*yScale));
+			
+			g.setColor(transGreen);
+			g.fillRect(Math.round(295*xScale), Math.round(465*yScale),Math.round(200*(Main.user.energy/100)*xScale), Math.round(20*yScale));
+			
+			g.setColor(transBlue);
+			g.fillRect(Math.round(550*xScale), Math.round(465*yScale),Math.round(200*(Main.user.hunger/100)*xScale), Math.round(20*yScale));
+			
+		
+			
 		break;
 		}
 		  

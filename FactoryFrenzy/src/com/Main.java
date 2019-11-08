@@ -116,7 +116,7 @@ public static void generateLandscape(long seed){
 			Config.WIDTH = Integer.parseInt(args[0]); //takes in args for height and width of window
 			Config.HEIGHT = Integer.parseInt(args[1]);
 		}catch(Exception e){
-				System.out.println("No Width or Heigh Args Given, Starting 800x600 or config");
+			System.out.println("No Width or Heigh Args Given, Starting 800x600 or config");
 		}
 		
 		Render.xScale = Config.WIDTH/800F; 

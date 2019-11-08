@@ -28,10 +28,9 @@ public class Player0 {
 	
 	public int helditm = 0;
 	
-	public float health = 100;
-	public float energy = 100;
-	public float thirst = 100;
-	public float hunger = 100;
+	public float health = 75;
+	public float energy = 50;
+	public float hunger = 25;
 	
 	public Image bodyimg, hairimg, faceimg, headimg;
 	
@@ -106,7 +105,6 @@ public class Player0 {
 		
 		health = json.getFloatValueOfDict(inpt, json.locateStringEnd(inpt, "hp"));
 		energy = json.getFloatValueOfDict(inpt, json.locateStringEnd(inpt, "stam"));
-		thirst = json.getFloatValueOfDict(inpt, json.locateStringEnd(inpt, "thir"));
 		hunger = json.getFloatValueOfDict(inpt, json.locateStringEnd(inpt, "hung"));
 
 		
@@ -154,7 +152,6 @@ public class Player0 {
 	        
 	        output.append("hp: " + health + ',');
 	        output.append("stam: " + energy + ',');
-	        output.append("thir: " + thirst +',');
 	        output.append("hung: " + hunger + ',');
 	        
 	        output.append('}');
